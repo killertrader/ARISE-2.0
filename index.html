@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Trading Trick</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: #fff;
+    }
+    .color-box {
+      width: 150px;
+      height: 150px;
+      display: inline-block;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #000;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 30px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Color Trading Trick</h1>
+  <div>
+    <div>
+      <h3>You</h3>
+      <div id="yourColor" class="color-box"></div>
+    </div>
+    <div>
+      <h3>Market</h3>
+      <div id="marketColor" class="color-box"></div>
+    </div>
+  </div>
+  <div id="result"></div>
+  <button onclick="trade()">Trade!</button>
+
+  <script>
+    function getRandomColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return { r, g, b, hex: `rgb(${r},${g},${b})` };
+    }
+
+    function getBrightness({ r, g, b }) {
+      // Simple brightness formula
+      return (r * 299 + g * 587 + b * 114) / 1000;
+    }
+
+    function trade() {
+      const your = getRandomColor();
+      const market = getRandomColor();
+
+      document.getElementById('yourColor').style.background = your.hex;
+      document.getElementById('marketColor').style.background = market.hex;
+
+      const yourB = getBrightness(your);
+      const marketB = getBrightness(market);
+
+      const resultText = yourB > marketB
+        ? "You Win the Trade!"
+        : yourB < marketB
+        ? "Market Wins!"
+        : "It's a Tie!";
+
+      document.getElementById('result').textContent = resultText;
+    }
+  </script>
+
+</body>
+</html>
