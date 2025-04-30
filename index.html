@@ -1,83 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Color Trading Trick</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KILLER X</title>
   <style>
     body {
+      background: black;
+      color: white;
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #111;
-      color: #fff;
     }
-    .color-box {
-      width: 150px;
-      height: 150px;
-      display: inline-block;
-      margin: 20px;
+    .box {
+      border: 3px solid red;
+      margin: 10px;
+      padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 0 20px #000;
     }
-    #result {
-      font-size: 24px;
-      margin-top: 20px;
+    .red {
+      color: red;
+      font-weight: bold;
+    }
+    .green {
+      color: lime;
+      font-weight: bold;
     }
     button {
       padding: 10px 20px;
+      margin-top: 10px;
       font-size: 18px;
-      margin-top: 30px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    #resultBox div {
+      margin: 5px;
       cursor: pointer;
+    }
+    #message {
+      color: yellow;
+      margin-top: 10px;
+    }
+    #passwordPage {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+    #passwordPage input {
+      padding: 10px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
+  <h1 class="red">KILLER X</h1>
 
-  <h1>Color Trading Trick</h1>
-  <div>
+  <div class="box">
     <div>
-      <h3>You</h3>
-      <div id="yourColor" class="color-box"></div>
-    </div>
-    <div>
-      <h3>Market</h3>
-      <div id="marketColor" class="color-box"></div>
+      <span class="red">SERVER 1</span> | <span class="green">CONNECTED</span>
     </div>
   </div>
-  <div id="result"></div>
-  <button onclick="trade()">Trade!</button>
+
+  <div class="box">
+    <div>
+      <span class="white">SERVER SELECT ⇔</span>
+      <span class="red" onclick="showPasswordPage()">CLICK HEAR</span>
+    </div>
+  </div>
+
+  <div class="box">
+    GAME PERIOD: <span id="period"></span><br>
+    TIMER: <span id="timer">00:00</span>
+  </div>
+
+  <div class="box" id="resultBox">
+    <div onclick="showResult(1)">Result 1</div>
+    <div onclick="showResult(2)">Result 2</div>
+    <div onclick="showResult(3)">Result 3</div>
+  </div>
+
+  <button onclick="analyse()">ANYLISE</button>
+  <div id="message"></div>
+
+  <!-- Password Page -->
+  <div id="passwordPage" style="display:flex;">
+    <h2>ENTER PASSWORD</h2>
+    <input type="password" id="passwordInput" placeholder="Enter password..." />
+    <button onclick="checkPassword()">Submit</button>
+  </div>
 
   <script>
-    function getRandomColor() {
-      const r = Math.floor(Math.random() * 256);
-      const g = Math.floor(Math.random() * 256);
-      const b = Math.floor(Math.random() * 256);
-      return { r, g, b, hex: `rgb(${r},${g},${b})` };
+    let tapped = false;
+
+    function updateTimerAndPeriod() {
+      const calendar = new Date();
+      const seconds = calendar.getSeconds();
+      const remainingSeconds = 60 - seconds;
+      const currentHour = calendar.getHours();
+      const currentMinute = calendar.getMinutes();
+      const startHour = 5;
+      const startMinute = 29;
+      let elapsedMinutes = (currentHour * 60 + currentMinute) - (startHour * 60 + startMinute);
+      if (elapsedMinutes < 0) elapsedMinutes = 0;
+
+      const formattedDate = calendar.toISOString().slice(0, 10).replace(/-/g, '');
+      const periodNumber = '100001' + String(elapsedMinutes).padStart(4, '0');
+      document.getElementById('period').textContent = formattedDate + periodNumber;
+      document.getElementById('timer').textContent = `00:${String(remainingSeconds).padStart(2, '0')}`;
+
+      tapped = false; // reset tap every minute
+      document.getElementById('message').textContent = '';
     }
 
-    function getBrightness({ r, g, b }) {
-      // Simple brightness formula
-      return (r * 299 + g * 587 + b * 114) / 1000;
+    setInterval(updateTimerAndPeriod, 1000);
+
+    function showResult(num) {
+      if (tapped) {
+        document.getElementById('message').textContent = 'WAIT FOR NEXT PERIOD';
+        return;
+      }
+
+      const isBig = num >= 2; // example logic
+      document.getElementById('message').textContent = isBig ? 'BIG' : 'SMALL';
+      tapped = true;
     }
 
-    function trade() {
-      const your = getRandomColor();
-      const market = getRandomColor();
-
-      document.getElementById('yourColor').style.background = your.hex;
-      document.getElementById('marketColor').style.background = market.hex;
-
-      const yourB = getBrightness(your);
-      const marketB = getBrightness(market);
-
-      const resultText = yourB > marketB
-        ? "You Win the Trade!"
-        : yourB < marketB
-        ? "Market Wins!"
-        : "It's a Tie!";
-
-      document.getElementById('result').textContent = resultText;
+    function analyse() {
+      alert('Analyzing...');
     }
+
+    function showPasswordPage() {
+      document.getElementById('passwordPage').style.display = 'flex';
+    }
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === 'KILLER ON TOP') {
+        alert('Access Granted!');
+        document.getElementById('passwordPage').style.display = 'none';
+      } else {
+        alert('Incorrect Password');
+      }
+    }
+
+    // Initial load
+    updateTimerAndPeriod();
   </script>
-
 </body>
-</html>
+    </html>
